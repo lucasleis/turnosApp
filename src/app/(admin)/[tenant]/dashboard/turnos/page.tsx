@@ -2,16 +2,10 @@ import { notFound } from "next/navigation";
 import { getTenantBySlug, getTenantBarbers } from "@/modules/tenants/get-tenant";
 import { prisma } from "@/lib/prisma";
 import { StatusSelect } from "./_components/status-select";
+import { TurnosFilters } from "./_components/turnos-filters";
 import { formatDate } from "@/lib/utils";
 import { BookingStatus } from "@prisma/client";
 
-const STATUS_FILTER_OPTIONS: { value: string; label: string }[] = [
-  { value: "", label: "Todos" },
-  { value: "PENDING", label: "Pendientes" },
-  { value: "CONFIRMED", label: "Confirmados" },
-  { value: "COMPLETED", label: "Completados" },
-  { value: "CANCELLED", label: "Cancelados" },
-];
 
 export default async function TurnosPage({
   params,
@@ -56,60 +50,13 @@ export default async function TurnosPage({
     <div className="space-y-6">
       <h1 className="text-xl font-semibold text-zinc-900">Turnos</h1>
 
-      {/* Filtros */}
-      <form className="flex flex-wrap gap-3">
-        <input type="hidden" name="tenant" value={slug} />
-
-        <select
-          name="estado"
-          defaultValue={estado ?? ""}
-          onChange={(e) => {
-            const form = e.target.form!;
-            form.submit();
-          }}
-          className="h-9 px-3 text-sm rounded-lg border border-zinc-200 bg-white text-zinc-700 focus:outline-none focus:ring-2 focus:ring-accent/40"
-        >
-          {STATUS_FILTER_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-
-        <select
-          name="barbero"
-          defaultValue={barbero ?? ""}
-          className="h-9 px-3 text-sm rounded-lg border border-zinc-200 bg-white text-zinc-700 focus:outline-none focus:ring-2 focus:ring-accent/40"
-        >
-          <option value="">Todos los barberos</option>
-          {barbers.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.tenantMember.user.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="date"
-          name="fecha"
-          defaultValue={fecha ?? ""}
-          className="h-9 px-3 text-sm rounded-lg border border-zinc-200 bg-white text-zinc-700 focus:outline-none focus:ring-2 focus:ring-accent/40"
-        />
-
-        <button
-          type="submit"
-          className="h-9 px-4 text-sm font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-700 transition-colors"
-        >
-          Filtrar
-        </button>
-
-        {(estado || barbero || fecha) && (
-          <a
-            href={`/${slug}/dashboard/turnos`}
-            className="h-9 px-4 text-sm font-medium rounded-lg border border-zinc-200 text-zinc-600 hover:bg-zinc-50 flex items-center transition-colors"
-          >
-            Limpiar
-          </a>
-        )}
-      </form>
+      <TurnosFilters
+        tenantSlug={slug}
+        barbers={barbers}
+        estado={estado}
+        barbero={barbero}
+        fecha={fecha}
+      />
 
       {/* Tabla */}
       <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
