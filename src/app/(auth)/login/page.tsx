@@ -1,0 +1,15 @@
+import { Metadata } from "next";
+import { Suspense } from "react";
+import { LoginForm } from "./_components/login-form";
+
+export const metadata: Metadata = {
+  title: "Ingresar",
+};
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
